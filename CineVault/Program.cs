@@ -1,25 +1,46 @@
+
+using CineVault.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Визначення активного середовища
+var environment = builder.Environment.EnvironmentName;
 
+Console.WriteLine(
+    $"=== Запуск у середовищі: {environment} ===");
+
+// Отримання конфігурації підключення
+var connectionString = builder.Configuration
+    .GetConnectionString("DefaultConnection");
+
+Console.WriteLine(
+    $"Рядок підключення налаштовано: {!string.IsNullOrWhiteSpace(connectionString)}");
+
+// Реєстрація контролерів
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+// ЛР №8. Налаштування версійності API
+builder.Services.AddApiVersioningWithApiExplorer();
+
+// ЛР №8. Swagger для кількох версій API
+builder.Services.AddSwaggerWithOptions();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Swagger доступний лише в Development
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerWithOptions();
+}
+
+// Сторінка помилок для Local
+if (app.Environment.IsLocal())
+{
+    app.UseDeveloperExceptionPage();
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
