@@ -1,0 +1,6 @@
+@CineVault_HostAddress = http://localhost:5253
+
+GET {{CineVault_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
